@@ -23,3 +23,31 @@ This template does not include any kind of persistence (database). For more adva
 ```
 $ serverless deploy
 ```
+
+## Dependencies
+
+### Middy
+
+[Documentation](https://middy.js.org/docs/ "Middy is a very simple middleware engine that allows you to simplify your AWS Lambda code when using Node.js")
+
+```
+$ npm install --save @middy/core
+```
+
+### http-event-normalizer
+
+```
+$ npm install --save @middy/http-event-normalizer
+```
+
+### http-error-handler
+
+```
+$ npm install --save @middy/http-error-handler
+```
+
+### http-json-body-parser
+
+```
+$ npm install --save @middy/http-json-body-parser
+```
