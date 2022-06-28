@@ -1,0 +1,45 @@
+service: udemy-serverless-bootcamp-aws
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: sa-east-1
+  environment:
+    AUCTION_TABLE_NAME: ${self:custom.AuctionTable.name}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - ${self:custom.AuctionTable.arn}
+        # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/AuctionTable-${self:provider.stage}
+
+resources:
+  Resources:
+    AuctionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: AuctionTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+functions:
+  createAuction:
+    handler: src/handlers/createAuction.handler
+    events:
+      - httpApi:
+          path: /auction
+          method: post
+
+custom:
+  AuctionTable:
+    name: !Ref AuctionTable
+    arn: !GetAtt AuctionTable.Arn
