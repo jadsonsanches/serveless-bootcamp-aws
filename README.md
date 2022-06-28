@@ -51,3 +51,9 @@ $ npm install --save @middy/http-error-handler
 ```
 $ npm install --save @middy/http-json-body-parser
 ```
+
+### http-errors
+
+```
+$ npm install http-errors
+```
