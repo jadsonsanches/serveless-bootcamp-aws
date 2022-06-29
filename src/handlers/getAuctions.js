@@ -6,37 +6,30 @@ const httpEventNormalizer = require('@middy/http-event-normalizer')
 const httpErrorHandler = require('@middy/http-error-handler')
 const createError = require('http-errors')
 
-const createAuction = async (event) => {
+const getAuctions = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-  const { title } = event.body;
-  const now = new Date();
-
-  const auction = {
-    id: v4(),
-    title,
-    status: 'OPEN',
-    createAt: now.toISOString(),
-  }
+  let auctions;
 
   try {
-    await dynamodb.put({
-      TableName: process.env.AUCTION_TABLE_NAME,
-      Item: auction,
+    const result = await dynamodb.scan({
+      TableName: process.env.AUCTION_TABLE_NAME
     }).promise();
+
+    auctions = result.Items;
+
   } catch (error) {
     console.error(error);
     throw new createError.InternalServerError(error);
   }
 
   return {
-    statusCode: 201,
-    body: JSON.stringify(auction),
+    statusCode: 200,
+    body: JSON.stringify(auctions),
   };
 };
 
 module.exports = {
-  handler: middy(createAuction)
+  handler: middy(getAuctions)
     .use(httpJsonBodyParser())
     .use(httpEventNormalizer())
     .use(httpErrorHandler())
