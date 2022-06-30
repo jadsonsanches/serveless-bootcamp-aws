@@ -14,6 +14,7 @@ provider:
       Action:
         - dynamodb:PutItem
         - dynamodb:Scan
+        - dynamodb:GetItem
       Resource:
         - ${self:custom.AuctionTable.arn}
         # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/AuctionTable-${self:provider.stage}
@@ -38,12 +39,18 @@ functions:
     events:
       - httpApi:
           path: /auction
-          method: post   
+          method: post
   getAuctions:
     handler: src/handlers/getAuctions.handler
     events:
       - httpApi:
           path: /auctions
+          method: get
+  getAuction:
+    handler: src/handlers/getAuction.handler
+    events:
+      - httpApi:
+          path: /auction/{id}
           method: get
 
 custom:
